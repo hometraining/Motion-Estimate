@@ -16,7 +16,7 @@ pip install opencv-python==4.5.0
 - 거북목 진단
 - Timer 추가 (앉은 시간 판별 후 📢 ALERT)
 
-### 🤸운동할 때🤸
+## 🤸운동할 때🤸
 
 ### 추가 기능
 #### SQUAT
