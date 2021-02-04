@@ -8,6 +8,6 @@
 - 거북목 진단
 
 ```pythohn
-class map:
+Class map:
   def __init__(self):
 ```
