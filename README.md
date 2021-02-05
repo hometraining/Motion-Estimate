@@ -9,6 +9,10 @@ pip install python==3.7.4
 pip install mediapipe==0.8.2
 pip install opencv-python==4.5.0
 ```
+### 실행하기
+```
+python main.py
+```
 ## 🧘작업하기🧘
 ### 추가 기능
 - 앉은 자세 판별
