@@ -29,5 +29,5 @@ pip install opencv-python==4.5.0
 #### PUSH UP
 - 팔꿈치 각도를 이용하여 연산
 
-#### LEGS
+#### LEG
 - 다리 각도 연산
