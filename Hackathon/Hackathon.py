@@ -2,10 +2,12 @@ import cv2
 import mediapipe as mp
 import math
 import numpy as np
+
 #==================================
 pose_list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32]
 action_status = True
 action_count = 0
+times=10
 #==================================
 def is_turtleneck(ear, shoulder):
     print(round(ear,2), round(shoulder,2))
@@ -14,6 +16,7 @@ def is_turtleneck(ear, shoulder):
         print("거북목 아님")
     else:
         print("거북목 의심해보시길...")
+        
 def is_leg(hip_l, hip_r, ankle_l, ankle_r):
     global action_count
     global action_status
@@ -29,6 +32,7 @@ def is_leg(hip_l, hip_r, ankle_l, ankle_r):
             action_status = True
     else: #운동 대충
         print("다리 더 올리기")
+
 def is_pushup(shoulder_l, shoulder_r, elbow_l, elbow_r, wrist_l, wrist_r, hip_l, hip_r, ankle_l, ankle_r):
     global action_count
     global action_status
@@ -60,6 +64,7 @@ def is_pushup(shoulder_l, shoulder_r, elbow_l, elbow_r, wrist_l, wrist_r, hip_l,
             print("더 내려가고 엉덩이 내려라 팔굽 하기싫으면 지금 그만두던가")
         elif elbow_angle < 60 and 200 < body_angle:
             print("ㅋㅋㅋㅋㅋㅋㅋㅋㅋ")
+
 def is_squat(shoulder_l, shoulder_r, hip_l, hip_r, knee_l, knee_r, ankle_l, ankle_r):
     global action_status
     global action_count
@@ -85,18 +90,29 @@ def is_squat(shoulder_l, shoulder_r, hip_l, hip_r, knee_l, knee_r, ankle_l, ankl
             print("스쿼트 제대로해 발목나간다!!")
         elif hip_angle < 80 or 140 < hip_angle:
             print("스쿼트 제대로해 허리나간다!!")
+    if 60 < knee_angle < 80 and  60 < hip_angle < 80:
+        print("굳")
+        action_status = False
+    else:
+        if knee_angle < 70 or 130 < knee_angle :
+            print("스쿼트 제대로해 발목나간다!!")
+        elif hip_angle < 80 or 140 < hip_angle:
+            print("스쿼트 제대로해 허리나간다!!")
+            
 def get_angle_v4(p1, p2, p3, p4):
     angle = math.degrees(math.atan2(p4.y - p2.y, p4.x - p2.x) - math.atan2(p1.y - p3.y, p1.x - p3.x))
     return angle + 360 if angle < 0 else angle
 def get_angle_v3(p1, p2, p3):
     angle = math.degrees(math.atan2(p3.y-p2.y, p3.x-p2.x) - math.atan2(p1.y-p2.y, p1.x-p2.x))
     return angle + 360 if angle < 0 else angle
+    
     '''
     o1 = math.atan((p1.y - p2.y)/(p1.x - p2.x))
     o2 = math.atan((p3.y - p2.y)/(p3.x - p2.x))
     angle = (abs((o1-o2) * 180/math.pi))
     return angle
     '''
+
 def get_angle_v2(p1, p2):
     x = p2.x - p1.x
     y = p2.y - p1.y
@@ -114,6 +130,13 @@ def main():
     cap = cv2.VideoCapture(0)
     count = 0
     while cap.isOpened():
+        global times
+        curTime = time.time()
+        sec = curTime - prevTime
+        prevTime = curTime
+        times -= sec
+        if times < 0:
+            print("Alert!!!!!!!!!!")
         if count % 10 == 0:
             success, image = cap.read()
             if not success:
@@ -181,7 +204,9 @@ def main():
                 print("총 {0}회 스쿼트를 했습니다".format(action_count))
                 print("겨우 이거했다고 자만하지마세요 니가 찌운살은 아직 안빠졌어요")
             break
+           
     pose.close()
     cap.release()
+
 if __name__ == "__main__":
     main()
