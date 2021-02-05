@@ -2,11 +2,12 @@ import cv2
 import mediapipe as mp
 import math
 import numpy as np
-times=10
+
 #==================================
 pose_list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32]
 action_status = True
 action_count = 0
+times=10
 #==================================
 def is_turtleneck(ear, shoulder):
     print(round(ear,2), round(shoulder,2))
@@ -141,6 +142,13 @@ def main():
     cap = cv2.VideoCapture(0)
     count = 0
     while cap.isOpened():
+        global times
+        curTime = time.time()
+        sec = curTime - prevTime
+        prevTime = curTime
+        times -= sec
+        if times < 0:
+            print("Alert!!!!!!!!!!")
         if count % 10 == 0:
             success, image = cap.read()
             if not success:
