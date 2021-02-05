@@ -19,7 +19,7 @@ pip install opencv-python==4.5.0
 ## 🤸운동할 때🤸
 
 ### 추가 기능
-- **[운동 횟수] COUNT **
+- **[운동 횟수] COUNT**
 - **[운동 자세 교정] VOICE**
 
 #### SQUAT
