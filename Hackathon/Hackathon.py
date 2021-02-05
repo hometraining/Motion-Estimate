@@ -3,7 +3,7 @@ import mediapipe as mp
 import math
 import numpy as np
 
-
+times=10
 def is_pushup(shoulder_l, shoulder_r, elbow_l, elbow_r, wrist_l, wrist_r):
     l_elbow_angle = get_angle_v3(wrist_l, elbow_l, shoulder_l)
     r_elbow_angle = get_angle_v3(wrist_r, elbow_r, shoulder_r)
@@ -115,6 +115,14 @@ def main():
     cap = cv2.VideoCapture(0)
     count = 0
     while cap.isOpened():
+        global times
+        curTime = time.time()
+        sec = curTime - prevTime
+        prevTime = curTime
+        times -= sec
+        if times < 0:
+            print("alert!!!!!!!!!!!!!!!!!!!!!!")
+        
         if count % 24 == 0:
             success, image = cap.read()
             if not success:
