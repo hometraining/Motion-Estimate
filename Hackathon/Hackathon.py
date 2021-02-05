@@ -32,7 +32,7 @@ def is_leg(hip_l, hip_r, ankle_l, ankle_r):
             action_status = True
     else: #운동 대충
         print("다리 더 올리기")
-        
+
 def is_pushup(shoulder_l, shoulder_r, elbow_l, elbow_r, wrist_l, wrist_r, hip_l, hip_r, ankle_l, ankle_r):
     global action_count
     global action_status
@@ -90,22 +90,22 @@ def is_squat(shoulder_l, shoulder_r, hip_l, hip_r, knee_l, knee_r, ankle_l, ankl
             print("스쿼트 제대로해 발목나간다!!")
         elif hip_angle < 80 or 140 < hip_angle:
             print("스쿼트 제대로해 허리나간다!!")
-    '''
     if 60 < knee_angle < 80 and  60 < hip_angle < 80:
         print("굳")
+        action_status = False
     else:
-        if knee_angle < 60 or  80 < knee_angle :
+        if knee_angle < 70 or 130 < knee_angle :
             print("스쿼트 제대로해 발목나간다!!")
-        elif hip_angle < 60 or  80 < hip_angle:
+        elif hip_angle < 80 or 140 < hip_angle:
             print("스쿼트 제대로해 허리나간다!!")
-    '''
-
+            
 def get_angle_v4(p1, p2, p3, p4):
     angle = math.degrees(math.atan2(p4.y - p2.y, p4.x - p2.x) - math.atan2(p1.y - p3.y, p1.x - p3.x))
     return angle + 360 if angle < 0 else angle
 def get_angle_v3(p1, p2, p3):
     angle = math.degrees(math.atan2(p3.y-p2.y, p3.x-p2.x) - math.atan2(p1.y-p2.y, p1.x-p2.x))
     return angle + 360 if angle < 0 else angle
+    
     '''
     o1 = math.atan((p1.y - p2.y)/(p1.x - p2.x))
     o2 = math.atan((p3.y - p2.y)/(p3.x - p2.x))
@@ -122,18 +122,6 @@ def get_angle_v2(p1, p2):
         print("이사람 정면이다!!!!!!!!")
     else:
         print("이사람 사이드다!!!!!!!!!!")
-
-
-def is_turtleneck(ear, shoulder):
-    # print(round(ear,2), round(shoulder,2))
-    turtleneck = shoulder * 0.1
-
-    if shoulder - turtleneck < ear < shoulder + turtleneck:
-        print("거북목 아님")
-    else:
-        print("거북목 의심해보시길...")
-
-
 def main():
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
@@ -216,9 +204,9 @@ def main():
                 print("총 {0}회 스쿼트를 했습니다".format(action_count))
                 print("겨우 이거했다고 자만하지마세요 니가 찌운살은 아직 안빠졌어요")
             break
-            
+           
     pose.close()
     cap.release()
-    
+
 if __name__ == "__main__":
     main()
