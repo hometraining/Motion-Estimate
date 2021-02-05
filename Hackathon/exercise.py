@@ -7,6 +7,9 @@ pose_list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25
 action_status = True #쉬는중
 action_count = [0,0,0]
 status = -1
+is_running = False
+#==================================
+result_list = []
 #==================================
 
 def calculate_action(status):
@@ -30,7 +33,7 @@ def is_pushup(shoulder_l, shoulder_r, elbow_l, elbow_r, wrist_l, wrist_r, hip_l,
     print("==========푸쉬업 시작~!~!~!==========")
     global action_count
     global action_status
-    action_status = True # 쉬는중
+
     l_elbow_angle = get_angle_v3(wrist_l, elbow_l, shoulder_l)
     r_elbow_angle = get_angle_v3(wrist_r, elbow_r, shoulder_r)
     l_body_angle = get_angle_v3(shoulder_l, hip_l, ankle_l)
@@ -65,11 +68,11 @@ def is_leg(hip_l, hip_r, ankle_l, ankle_r):
     print("==========스탠딩 사이드 레그레이즈 시작~!~!~!==========")
     global action_count
     global action_status
-    action_status = True  # 쉬는중
+
     leg_angle = get_angle_v4(ankle_l, hip_l, hip_r, ankle_r)
     print("다리 각도 {0}".format(round(leg_angle, 2)))
 
-    if leg_angle > 90: #운동중
+    if leg_angle > 50: #운동중
         action_status = False
     elif leg_angle < 30: #쉬는 중
         print("쉬는 중")
@@ -82,10 +85,8 @@ def is_leg(hip_l, hip_r, ankle_l, ankle_r):
 
 def is_squat(shoulder_l, shoulder_r, hip_l, hip_r, knee_l, knee_r, ankle_l, ankle_r):
     print("==========스쿼트 시작~!~!~!==========")
-
     global action_status
     global action_count
-    action_status = True  # 쉬는중
 
     l_knee_angle = get_angle_v3(hip_l, knee_l, ankle_l)
     l_hip_angle = get_angle_v3(knee_l, hip_l, shoulder_l)
@@ -109,14 +110,6 @@ def is_squat(shoulder_l, shoulder_r, hip_l, hip_r, knee_l, knee_r, ankle_l, ankl
             print("스쿼트 제대로해 발목나간다!!")
         elif hip_angle < 80 or 140 < hip_angle:
             print("스쿼트 제대로해 허리나간다!!")
-    if 60 < knee_angle < 80 and  60 < hip_angle < 80:
-        print("굳")
-        action_status = False
-    else:
-        if knee_angle < 70 or 130 < knee_angle :
-            print("스쿼트 제대로해 발목나간다!!")
-        elif hip_angle < 80 or 140 < hip_angle:
-            print("스쿼트 제대로해 허리나간다!!")
 
 def exercising():
     mp_drawing = mp.solutions.drawing_utils
@@ -128,6 +121,16 @@ def exercising():
     count = 0
 
     while cap.isOpened():
+        global is_running
+        global action_status
+
+        if is_running == False:
+            status = int(input("스쿼트 0, 팔굽혀펴기 1, 스탠딩 사이드 레그레이즈 2, 종료 3:"))
+            is_running = True
+            action_status = True
+        else:
+            pass
+
         if count % 10 == 0:
             success, image = cap.read()
             if not success:
@@ -139,11 +142,12 @@ def exercising():
             results = pose.process(image)
             try:
                 for index in pose_list:
-                    if results.pose_landmarks.landmark[index].visibility < 0.000000000000000001:
+                    if results.pose_landmarks.landmark[index].visibility < 0.0001:
                         results.pose_landmarks.landmark[index].x = None
                         results.pose_landmarks.landmark[index].y = None
                         results.pose_landmarks.landmark[index].z = None
 
+                #==================================================
                 l_elbow = results.pose_landmarks.landmark[13]
                 r_elbow= results.pose_landmarks.landmark[14]
                 l_wrist = results.pose_landmarks.landmark[15]
@@ -156,36 +160,25 @@ def exercising():
                 r_knee = results.pose_landmarks.landmark[26]
                 l_ankle = results.pose_landmarks.landmark[27]
                 r_ankle = results.pose_landmarks.landmark[28]
+                #=================================================
+                if status == 0:
+                    # ================스쿼트?==================
+                    is_squat(l_sh, r_sh, l_hip, r_hip, l_knee, r_knee, l_ankle, r_ankle)
+                    calculate_action(status)
 
-                while True:
-                    status = int(input("스쿼트 0, 팔굽혀펴기 1, 스탠딩 사이드 레그레이즈 2, 종료 3:"))
-                    if status == 0:
-                        # ================스쿼트?==================
-                        is_squat(l_sh, r_sh, l_hip, r_hip, l_knee, r_knee, l_ankle, r_ankle)
-                        calculate_action(status)
-                        action_count = 0
+                elif status == 1:
+                    # ================팔굽혀펴기?==================
+                    is_pushup(l_sh, r_sh, l_elbow, r_elbow, l_wrist, r_wrist, l_hip, r_hip, l_ankle, r_ankle)
+                    calculate_action(status)
 
-                    elif status == 1:
-                        # ================팔굽혀펴기?==================
-                        is_pushup(l_sh, r_sh, l_elbow, r_elbow, l_wrist, r_wrist, l_hip, r_hip, l_ankle, r_ankle)
-                        calculate_action(status)
-                        action_count = 0
+                elif status == 2:
+                    is_leg(l_hip, r_hip, l_ankle, r_ankle)
+                    calculate_action(status)
 
-                    elif status == 2:
-                        is_leg(l_hip, r_hip, l_ankle, r_ankle)
-                        calculate_action(status)
-                        action_count = 0
-
-                    elif status == 3:
-                        return -1
-
-                    else:
-                        print("다른 값을 넣으세요.")
-
-            # except TypeError as te:
-            #    print(te)
-            # except AttributeError as ae:
-            #    print(ae)
+                elif status == 3:
+                    return -1
+                else:
+                    print("다른 값을 넣으세요.")
             except Exception as e:
                 pass
             #    print(e)
@@ -198,6 +191,7 @@ def exercising():
         # esc누르면 끝나요
 
         if cv2.waitKey(5) & 0xFF == 27:
+            is_running = False
             break
 
     pose.close()
